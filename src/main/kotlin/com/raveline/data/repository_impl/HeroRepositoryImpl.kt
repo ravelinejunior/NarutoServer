@@ -5,7 +5,7 @@ import com.raveline.data.model.HeroModel
 import com.raveline.data.repository.HeroRepository
 
 const val NEXT_PAGE_KEY = "nextPage"
-const val PREVIOUS_PAGE_KEY = "previousPage"
+const val PREVIOUS_PAGE_KEY = "prevPage"
 
 class HeroRepositoryImpl : HeroRepository {
     override val heroes: Map<Int, List<HeroModel>> by lazy {
@@ -404,7 +404,9 @@ class HeroRepositoryImpl : HeroRepository {
 
         if (page in 1..4) {
             nextPage = nextPage?.plus(1)
-        } else if (page in 2..5) {
+        }
+
+        if (page in 2..5) {
             prevPage = prevPage?.minus(1)
         }
 
@@ -426,7 +428,8 @@ class HeroRepositoryImpl : HeroRepository {
             message = "ok",
             prevPage = calculatePage(page = page)[PREVIOUS_PAGE_KEY],
             nextPage = calculatePage(page = page)[NEXT_PAGE_KEY],
-            heroes = heroes[page]!!
+            heroes = heroes[page]!!,
+            lastUpdated = System.currentTimeMillis()
         )
 
     override suspend fun searchHeroes(heroName: String?): ApiResponseModel {

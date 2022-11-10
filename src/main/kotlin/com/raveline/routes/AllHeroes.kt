@@ -14,7 +14,7 @@ fun Route.getAllHeroes(){
         try{
             val page = call.request.queryParameters["page"]?.toInt()?:1
             require(page in 1..5)
-
+            println("NEW PAGE: $page")
             val response = heroesRepository.getAllHeroes(page)
 
 
