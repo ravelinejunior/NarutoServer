@@ -108,7 +108,7 @@ class ApplicationTest {
                     val expected = ApiResponseModel(
                         success = true,
                         message = "ok",
-                        prevPage = calculatePage(page = page)["previousPage"],
+                        prevPage = calculatePage(page = page)["prevPage"],
                         nextPage = calculatePage(page = page)["nextPage"],
                         heroes = heroes[page - 1]
                     )
