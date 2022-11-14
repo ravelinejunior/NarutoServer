@@ -4,7 +4,6 @@ import com.raveline.data.model.ApiResponseModel
 import com.raveline.data.repository.HeroRepository
 import com.raveline.data.repository_impl.NEXT_PAGE_KEY
 import com.raveline.data.repository_impl.PREVIOUS_PAGE_KEY
-import com.raveline.plugins.configureRouting
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -48,15 +47,18 @@ class ApplicationTest {
                     expected = HttpStatusCode.OK,
                     actual = response.status()
                 )
+
+                val actualResult = Json.decodeFromString<ApiResponseModel>(response.content.toString())
+
                 val expected = ApiResponseModel(
                     success = true,
                     message = "ok",
                     prevPage = null,
                     nextPage = 2,
-                    heroes = heroRepository.page1
+                    heroes = heroRepository.page1,
+                    lastUpdated = actualResult.lastUpdated
                 )
 
-                val actualResult = Json.decodeFromString<ApiResponseModel>(response.content.toString())
                 println("EXPECTED = $expected")
                 println("ACTUAL = $actualResult")
 
@@ -105,14 +107,16 @@ class ApplicationTest {
                         expected = HttpStatusCode.OK,
                         actual = response.status()
                     )
+
+                    val actualResponse = Json.decodeFromString<ApiResponseModel>(response.content.toString())
                     val expected = ApiResponseModel(
                         success = true,
                         message = "ok",
-                        prevPage = calculatePage(page = page)["previousPage"],
+                        prevPage = calculatePage(page = page)["prevPage"],
                         nextPage = calculatePage(page = page)["nextPage"],
-                        heroes = heroes[page - 1]
+                        heroes = heroes[page - 1],
+                        lastUpdated = actualResponse.lastUpdated
                     )
-                    val actualResponse = Json.decodeFromString<ApiResponseModel>(response.content.toString())
                     assertEquals(
                         expected = expected,
                         actual = actualResponse
@@ -129,7 +133,9 @@ class ApplicationTest {
 
         if (page in 1..4) {
             nextPage = nextPage?.plus(1)
-        } else if (page in 2..5) {
+        }
+
+        if (page in 2..5) {
             prevPage = prevPage?.minus(1)
         }
 
