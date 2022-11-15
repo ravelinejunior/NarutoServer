@@ -10,7 +10,7 @@ fun Application.module() {
     configureKoin()
     configureSerialization()
     configureMonitoring()
-    configureHTTP()
     configureRouting()
+    configureHeaders()
     configureStatusPage()
 }
